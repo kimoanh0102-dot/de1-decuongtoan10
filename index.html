@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Ôn Tập Toán 10 - Đề Số 1 (Đã Kiểm Tra)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Nunito', sans-serif; background: #ecfdf5; } /* Emerald-50 */
+        .game-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-btn {
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        .option-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .option-btn:active:not(:disabled) { transform: scale(0.98); }
+        .tf-btn { transition: all 0.3s; }
+        .tf-btn.selected { transform: scale(1.05); font-weight: 800; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+        
+        .hint-box {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .stats-table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 10px; }
+        .stats-table td { border: 1px solid #e2e8f0; padding: 6px 12px; text-align: center; font-weight: bold; color: #475569; font-size: 0.95em; }
+        .stats-table tr:nth-child(even) { background-color: #f8fafc; }
+        .stats-table tr:first-child td { background-color: #e0f2fe; color: #0369a1; }
+
+        .hidden-page { display: none !important; opacity: 0; }
+        .visible-page { display: block !important; opacity: 1; animation: fadeInPage 0.5s ease-out; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInPage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGreen { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        
+        .correct-anim { animation: pulseGreen 0.4s ease-in-out; }
+        
+        .review-item { border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
+        .review-item:last-child { border-bottom: none; }
+        .badge-correct { background-color: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+        .badge-wrong { background-color: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; }
+
+        #timer-display { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+        .time-critical { color: #ef4444; animation: pulseRed 1s infinite; }
+        @keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    </style>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        console.log('MathJax initial rendering complete');
+                    });
+                }
+            }
+        };
+    </script>
+</head>
+<body class="min-h-screen text-slate-800 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 p-4 md:p-6 lg:p-8">
+
+    <!-- SCREEN 1: WELCOME -->
+    <div id="welcome-screen" class="visible-page max-w-2xl mx-auto mt-6 text-center">
+        <div class="game-card p-8 md:p-12 border-t-8 border-emerald-500">
+            <div class="mb-6 inline-block p-4 rounded-full bg-emerald-100 text-emerald-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 mb-2">ĐỀ ÔN TẬP TOÁN 10</h1>
+            <h2 class="text-lg text-emerald-600 font-bold mb-4">ĐỀ SỐ 1 (HK1 2025-2026)</h2>
+            <div class="inline-flex items-center bg-orange-100 text-orange-700 px-4 py-2 rounded-lg font-bold text-sm mb-8">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Thời gian: 60 phút
+            </div>
+
+            <div class="max-w-sm mx-auto space-y-4 mb-8 text-left">
+                <div>
+                    <label class="block text-sm font-bold text-slate-600 mb-1">Họ và tên học sinh</label>
+                    <input type="text" id="student-name" class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition" placeholder="Nhập họ tên...">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-600 mb-1">Lớp</label>
+                    <input type="text" id="student-class" class="w-full p-3 border-2 border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none transition" placeholder="Ví dụ: 10A1">
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full md:w-auto px-10 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-700 transition transform hover:scale-105">
+                BẮT ĐẦU LÀM BÀI
+            </button>
+            <p id="error-msg" class="text-red-500 text-sm mt-3 hidden">Vui lòng nhập đầy đủ Họ tên và Lớp!</p>
+        </div>
+    </div>
+
+    <!-- GAME UI -->
+    <div id="game-ui" class="hidden-page max-w-4xl mx-auto mt-4 pb-20">
+        <div class="flex justify-between items-start mb-6 px-2">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span id="part-badge" class="px-3 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 uppercase tracking-wider">PHẦN 1</span>
+                    <span class="text-xs font-bold text-slate-400" id="student-display">Học sinh: ...</span>
+                </div>
+                <h2 id="part-title" class="text-lg font-bold text-slate-800 leading-tight">Trắc nghiệm</h2>
+            </div>
+            <div class="text-right flex flex-col items-end">
+                <div id="timer-display" class="text-2xl font-black text-slate-700 bg-white px-3 py-1 rounded-lg border border-slate-200 shadow-sm mb-1">60:00</div>
+                <div class="text-xs text-slate-400 font-bold uppercase">Điểm: <span id="score" class="text-emerald-600 text-sm">0.00</span></div>
+            </div>
+        </div>
+
+        <div class="w-full bg-white rounded-full h-2 mb-6 shadow-sm">
+            <div id="progress-bar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+        </div>
+
+        <div class="game-card p-6 md:p-8 relative min-h-[400px]">
+            <div id="question-container"></div>
+            
+            <div id="hint-area" class="mt-6 hidden">
+                <div class="hint-box p-4 rounded-lg text-sm text-slate-700">
+                    <div class="font-bold text-amber-600 mb-1 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                        Gợi ý hướng dẫn:
+                    </div>
+                    <div id="hint-content">...</div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-between items-center pt-6 border-t border-slate-100">
+                <button onclick="toggleHint()" class="text-amber-600 font-bold text-sm hover:text-amber-700 flex items-center transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Xem gợi ý
+                </button>
+                <div class="flex items-center gap-4">
+                    <span id="question-counter" class="text-slate-400 font-semibold text-sm">Câu 1/12</span>
+                    <button id="next-btn" onclick="nextQuestion()" class="px-6 py-2.5 bg-slate-800 text-white font-bold rounded-lg hover:bg-slate-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm">
+                        Tiếp theo
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen" class="hidden-page max-w-3xl mx-auto mt-6 text-center pb-20">
+        <div class="game-card p-8 border-t-8 border-emerald-500 mb-6">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Kết Quả Bài Làm</h2>
+            <p class="text-slate-500 mb-6"><span id="result-student-info" class="font-bold"></span></p>
+            
+            <div class="text-5xl font-black text-emerald-600 mb-2 tracking-tighter" id="final-score">0.00</div>
+            <div class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-8">Tổng Điểm / 10</div>
+            
+            <div id="sheet-status" class="text-xs font-bold mb-4 hidden"></div>
+
+            <div class="grid grid-cols-3 gap-3 mb-8">
+                <div class="p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <div class="text-blue-500 font-bold text-xs mb-1">P1. Trắc nghiệm</div>
+                    <div id="score-p1" class="text-lg font-bold text-slate-800">0/3.0</div>
+                </div>
+                <div class="p-3 bg-purple-50 rounded-xl border border-purple-100">
+                    <div class="text-purple-500 font-bold text-xs mb-1">P2. Đúng/Sai</div>
+                    <div id="score-p2" class="text-lg font-bold text-slate-800">0/4.0</div>
+                </div>
+                <div class="p-3 bg-orange-50 rounded-xl border border-orange-100">
+                    <div class="text-orange-500 font-bold text-xs mb-1">P3. Trả lời ngắn</div>
+                    <div id="score-p3" class="text-lg font-bold text-slate-800">0/3.0</div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center gap-4">
+                <button onclick="toggleReview()" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow hover:bg-emerald-700 transition">
+                    Xem chi tiết đáp án
+                </button>
+                <button onclick="location.reload()" class="px-6 py-3 bg-white border-2 border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition">
+                    Làm lại
+                </button>
+            </div>
+        </div>
+
+        <!-- REVIEW SECTION -->
+        <div id="review-section" class="game-card p-6 md:p-8 text-left hidden">
+            <h3 class="text-xl font-bold text-slate-800 mb-6 border-b pb-2">Chi Tiết Lời Giải - Đề Số 1</h3>
+            <div id="review-content" class="space-y-6">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================================================
+        // DÁN URL GOOGLE APPS SCRIPT CỦA BẠN VÀO DƯỚI ĐÂY
+        // ======================================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1pDiKF9rwmgIDC5tAylmpLP2gAwyic7i4cg1evnLAn7QeYXV66Lec5vlddcfUxd68ng/exec"; 
+        // ======================================================
+
+        const gameData = {
+            // PHẦN 1: TRẮC NGHIỆM ĐỀ 1
+            part1: [
+                {
+                    id: 1,
+                    question: "Trong các câu dưới đây, câu nào là mệnh đề toán học?",
+                    options: ["Việt Nam có 54 dân tộc.", "$x+1 < 3$", "London là thủ đô của nước Anh.", "$\\exists x \\in \\mathbb{Z}: 2x+6=0$"],
+                    correct: 3,
+                    hint: "Mệnh đề toán học là một khẳng định về một sự kiện trong toán học. Mệnh đề chứa biến không phải là mệnh đề.",
+                    explanation: "A, C là các mệnh đề xã hội/địa lý. B là mệnh đề chứa biến (chưa xác định tính đúng sai). D là mệnh đề toán học khẳng định sự tồn tại nghiệm nguyên. => <b>Đáp án D</b>"
+                },
+                {
+                    id: 2,
+                    question: "Cho hai tập hợp $A=(-\\infty;3]$ và $B=(2;9)$. Tập hợp $A \\cap B$ bằng:",
+                    options: ["$(-\\infty;9)$", "$(2;3]$", "$(3;9)$", "$[3;9)$"],
+                    correct: 1,
+                    hint: "Tìm phần chung của hai khoảng trên trục số. $x$ thuộc cả A và B.",
+                    explanation: "Giao của A và B là các phần tử $x$ thỏa mãn $x \\le 3$ và $2 < x < 9$. Kết hợp lại ta được $2 < x \\le 3$, tức là nửa khoảng $(2; 3]$. => <b>Đáp án B</b>"
+                },
+                {
+                    id: 3,
+                    question: "Cho hai tập hợp $A=[-2;2]$ và $B=(-1;3)$. Tập hợp $A \\cap B$ bằng:",
+                    options: ["$[-2;3)$", "$(-1;2]$", "$[-2;-1]$", "$(-1;2)$"],
+                    correct: 1,
+                    hint: "Vẽ trục số. Lấy phần giao nhau của đoạn $[-2; 2]$ và khoảng $(-1; 3)$.",
+                    explanation: "Phần chung của A và B là các số thực $x$ thỏa mãn $-1 < x \\le 2$. Vậy $A \\cap B = (-1; 2]$. => <b>Đáp án B</b>"
+                },
+                {
+                    id: 4,
+                    question: "Cho góc $\\alpha$ ($0^0 < \\alpha < 180^0$). Khẳng định nào sau đây là đúng?",
+                    options: ["$\\sin \\alpha > 0$", "$\\cos \\alpha > 0$", "$\\sin \\alpha > 0$", "$\\cos \\alpha < 0$"],
+                    correct: 0,
+                    hint: "Góc từ $0^0$ đến $180^0$ nằm trong nửa trên của đường tròn lượng giác. Tung độ (sin) luôn dương.",
+                    explanation: "Với $0^0 < \\alpha < 180^0$, điểm biểu diễn nằm ở góc phần tư thứ I hoặc II, nơi tung độ luôn dương. Do đó $\\sin \\alpha > 0$. (Cos có thể âm hoặc dương). => <b>Đáp án A</b>"
+                },
+                {
+                    id: 5,
+                    question: "Đâu là hệ bất phương trình bậc nhất hai ẩn?",
+                    options: [
+                        "$\\begin{cases}x^{2}+y>2024\\\\ 2x-y<2025\\end{cases}$",
+                        "$\\begin{cases}x+2xy>2024\\\\ 2x-y<2025\\end{cases}$",
+                        "$\\begin{cases}x+y>2024\\\\ 2x-y<2025\\end{cases}$",
+                        "$\\begin{cases}x+y>2024\\\\ 2x-y=2025\\end{cases}$"
+                    ],
+                    correct: 2,
+                    hint: "Bậc nhất hai ẩn nghĩa là chỉ chứa x, y bậc 1, không chứa $x^2$, $y^2$ hay tích $xy$.",
+                    explanation: "A sai vì có $x^2$. B sai vì có $xy$. D sai vì có dấu \"=\" (hệ hỗn hợp). C đúng vì gồm các bất phương trình bậc nhất hai ẩn. => <b>Đáp án C</b>"
+                },
+                {
+                    id: 6,
+                    question: "Cho hình thoi ABCD. Véctơ cùng hướng với $\\vec{AB}$ là:",
+                    options: ["$\\vec{BA}$", "$\\vec{CD}$", "$\\vec{DC}$", "$\\vec{AC}$"],
+                    correct: 2,
+                    hint: "Vẽ hình thoi ABCD. Tìm cạnh song song với AB và có cùng hướng từ trái sang phải (tương ứng).",
+                    explanation: "Trong hình thoi ABCD, cạnh AB song song và bằng cạnh DC. Hướng từ A đến B cùng chiều với hướng từ D đến C. Vậy $\\vec{AB}$ cùng hướng $\\vec{DC}$. => <b>Đáp án C</b>"
+                },
+                {
+                    id: 7,
+                    question: "Trong mặt phẳng tọa độ Oxy, cho tam giác ABC với $A(4;0)$, $B(2;-3)$, $C(9;6)$. Tọa độ trọng tâm G của tam giác ABC là:",
+                    options: ["$(3;5)$", "$(5;1)$", "$(15;9)$", "$(9;15)$"],
+                    correct: 1,
+                    hint: "Tọa độ trọng tâm bằng trung bình cộng tọa độ 3 đỉnh: $x_G = \\frac{x_A+x_B+x_C}{3}$.",
+                    explanation: "$x_G = \\frac{4+2+9}{3} = \\frac{15}{3} = 5$. $y_G = \\frac{0-3+6}{3} = \\frac{3}{3} = 1$. Vậy $G(5; 1)$. => <b>Đáp án B</b>"
+                },
+                {
+                    id: 8,
+                    question: "Trong hệ toạ độ Oxy, cho $A(2;-3)$, $B(3;4)$. Tìm toạ độ điểm $M$ thuộc trục hoành sao cho A, B, M thẳng hàng.",
+                    options: ["$M(\\frac{17}{7};0)$", "$M(4;0)$", "$M(-\\frac{5}{3};0)$", "$M(1;0)$"],
+                    correct: 0,
+                    hint: "Điểm M thuộc Ox có dạng $M(x; 0)$. Ba điểm thẳng hàng khi vectơ $\\vec{AB}$ và $\\vec{AM}$ cùng phương.",
+                    explanation: "$M(x; 0)$. $\\vec{AB} = (1; 7)$. $\\vec{AM} = (x-2; 3)$. Điều kiện cùng phương: $\\frac{x-2}{1} = \\frac{3}{7} \\Rightarrow x-2 = \\frac{3}{7} \\Rightarrow x = \\frac{17}{7}$. Vậy $M(\\frac{17}{7}; 0)$. => <b>Đáp án A</b>"
+                },
+                {
+                    id: 9,
+                    question: "Cho tam giác ABC đều. Tính góc $(\\vec{AB},\\vec{AC})$.",
+                    options: ["$90^{\\circ}$", "$135^{\\circ}$", "$90^{\\circ}$", "$60^{\\circ}$"],
+                    correct: 3,
+                    hint: "Góc giữa hai vectơ chung gốc bằng số đo góc tại đỉnh đó.",
+                    explanation: "Tam giác đều có các góc bằng $60^{\\circ}$. Góc giữa $\\vec{AB}$ và $\\vec{AC}$ chính là góc $\\widehat{BAC} = 60^{\\circ}$. => <b>Đáp án D</b>"
+                },
+                {
+                    id: 10,
+                    question: "Tìm số gần đúng của số $a=15285$ với độ chính xác $d=300$.",
+                    options: ["15000", "15300", "15585", "15500"],
+                    correct: 0,
+                    hint: "Độ chính xác d=300 (hàng trăm). Quy tắc làm tròn đến hàng gấp 10 lần d (hàng nghìn).",
+                    explanation: "Quy tròn đến hàng nghìn. Chữ số hàng nghìn là 5. Chữ số sau nó là 2 ($<5$) nên giữ nguyên và thay các số sau bằng 0. Kết quả: 15000. => <b>Đáp án A</b>"
+                },
+                {
+                    id: 11,
+                    question: "Trong mặt phẳng tọa độ Oxy, cho $\\vec{a}=(1;-2)$ và $\\vec{b}=(2;-3)$. Tính $\\vec{a}.\\vec{b}$.",
+                    options: ["8", "-8", "-4", "0"],
+                    correct: 0,
+                    hint: "Công thức tích vô hướng: $x_1x_2 + y_1y_2$.",
+                    explanation: "$\\vec{a}.\\vec{b} = 1.2 + (-2).(-3) = 2 + 6 = 8$. => <b>Đáp án A</b>"
+                },
+                {
+                    id: 12,
+                    question: "Mẫu số liệu chiều cao (m): 6,1; 6,8; 7,5; 8,2; 8,2; 7,8; 7,9; 9,0; 8,9; 7,2; 7,5; 8,7; 7,7; 8,8; 7,6. Tính khoảng biến thiên.",
+                    options: ["2,9", "2,8", "3,0", "2,2"],
+                    correct: 0,
+                    hint: "Khoảng biến thiên R = Giá trị lớn nhất - Giá trị nhỏ nhất.",
+                    explanation: "Giá trị lớn nhất $x_{max} = 9,0$. Giá trị nhỏ nhất $x_{min} = 6,1$. Khoảng biến thiên $R = 9,0 - 6,1 = 2,9$. => <b>Đáp án A</b>"
+                }
+            ],
+            // PHẦN 2: ĐÚNG/SAI ĐỀ 1
+            part2: [
+                {
+                    id: 13,
+                    question: "Cho tập hợp A gồm các số nguyên tố có 1 chữ số, $B=\\{x\\in\\mathbb{R}|(x-3)(x-5)=0\\}$. Xét tính đúng sai:",
+                    items: [
+                        { text: "Tập $A=\\{1;2;3;5;7\\}$.", isTrue: false }, 
+                        { text: "Tập B có đúng 4 tập con.", isTrue: true }, 
+                        { text: "Số tập con có 2 phần tử của A là 6.", isTrue: true }, 
+                        { text: "Có 5 tập X thỏa $B \\subset X \\subset A$.", isTrue: false } 
+                    ],
+                    hint: "Số 1 không phải SNT. Số tập con là $2^n$.",
+                    explanation: "a) 1 không là SNT. $A=\\{2;3;5;7\\}$. (Sai)<br>b) $B=\\{3;5\\}$ (2 phần tử) $\\Rightarrow 2^2=4$ tập con. (Đúng)<br>c) $A$ có 4 phần tử. $C_4^2 = 6$. (Đúng)<br>d) $X$ phải chứa $\\{3;5\\}$ và lấy thêm từ $\\{2;7\\}$. Số tập con của $\\{2;7\\}$ là $2^2=4$. Có 4 tập X. (Sai)"
+                },
+                {
+                    id: 14,
+                    question: "Trong một cuộc thi thể thao, người ta ghi lại thời gian hoàn thành chặng đường đua của một số vận động viên ở bảng sau:<table class='stats-table mt-2'><tr><td>Thời gian (phút)</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr><tr><td>Số vận động viên</td><td>3</td><td>4</td><td>3</td><td>5</td><td>1</td></tr></table>",
+                    items: [
+                        { text: "Mốt của mẫu số liệu trên là 7.", isTrue: true },
+                        { text: "Tứ phân vị thứ nhất và thứ ba lần lượt là 5 và 6.", isTrue: false }, 
+                        { text: "Độ lệch chuẩn (làm tròn đến hàng phần trăm) là 1,23.", isTrue: true },
+                        { text: "Khoảng tứ phân vị là 2.", isTrue: true } 
+                    ],
+                    hint: "Mốt là giá trị có tần số lớn nhất. Sắp xếp dữ liệu để tìm Q1, Q3.",
+                    explanation: "a) Giá trị 7 có tần số 5 (cao nhất) $\\Rightarrow M_0=7$. (Đúng)<br>b) Tổng n=16. Q1 (vị trí 4.5) là 5. Q3 (vị trí 12.5) là 7. (Sai vì đề nói 6)<br>c) Tính máy tính $\\sigma \\approx 1,23$. (Đúng)<br>d) $\\Delta_Q = Q_3 - Q_1 = 7 - 5 = 2$. (Đúng)"
+                },
+                {
+                    id: 15,
+                    question: "Cho $\\Delta ABC$ đều. D, E, F lần lượt là trung điểm AB, AC, BC.",
+                    items: [
+                        { text: "Hai vectơ $\\vec{DF}, \\vec{AC}$ ngược hướng.", isTrue: false }, 
+                        { text: "$\\vec{DA}+\\vec{DF}=\\vec{DE}.$", isTrue: true }, 
+                        { text: "$\\vec{DF}=-\\frac{1}{2}\\vec{AC}$.", isTrue: false }, 
+                        { text: "$\\vec{DF}.\\vec{BE}=0$.", isTrue: true } 
+                    ],
+                    hint: "DF là đường trung bình song song AC. Quy tắc hình bình hành cho vectơ.",
+                    explanation: "a) DF song song và cùng chiều AC (trái sang phải). (Sai)<br>b) ADEF là hình thoi. $\\vec{DA}+\\vec{DF}=\\vec{DE}$. (Đúng)<br>c) $\\vec{DF} = \\frac{1}{2}\\vec{AC}$ (cùng chiều). (Sai vì có dấu -)<br>d) $DF \\parallel AC$, $BE \\perp AC \\Rightarrow DF \\perp BE$. Tích vô hướng bằng 0. (Đúng)"
+                },
+                {
+                    id: 16,
+                    question: "Trong hệ trục Oxy, cho $A(1;1)$, $B(6;1)$, $C(2;-5)$.",
+                    items: [
+                        { text: "Tọa độ $3\\vec{AC}=(15;0)$.", isTrue: false }, 
+                        { text: "Vectơ $\\vec{AB}$ và $\\vec{BC}$ không cùng phương.", isTrue: true },
+                        { text: "Góc $(\\vec{AB},\\vec{BC})$ có giá trị cos là $-\\frac{2\\sqrt{13}}{13}$.", isTrue: true },
+                        { text: "Gọi M là trung điểm BC, G là trọng tâm ABC, $\\vec{AM}.\\vec{BG}=3$.", isTrue: false } 
+                    ],
+                    hint: "Tính tọa độ vectơ. Kiểm tra tỉ lệ. Công thức cos góc giữa 2 vectơ.",
+                    explanation: "a) $\\vec{AC}=(1;-6) \\Rightarrow 3\\vec{AC}=(3;-18)$. (Sai)<br>b) $\\vec{AB}=(5;0)$, $\\vec{BC}=(-4;-6)$. Không tỷ lệ $\\Rightarrow$ Không cùng phương. (Đúng)<br>c) $\\cos = \\frac{5(-4)+0}{\\sqrt{25}.\\sqrt{16+36}} = \\frac{-20}{5\\sqrt{52}} = \\frac{-4}{2\\sqrt{13}} = \\frac{-2\\sqrt{13}}{13}$. (Đúng)<br>d) $M(4;-2), G(3;-1)$. $\\vec{AM}=(3;-3), \\vec{BG}=(-3;-2)$. $\\vec{AM}.\\vec{BG} = 3(-3)+(-3)(-2) = -9+6=-3$. (Sai vì đề nói 3)"
+                }
+            ],
+            // PHẦN 3: TRẢ LỜI NGẮN ĐỀ 1
+            part3: [
+                {
+                    id: 17,
+                    question: "Trong mặt phẳng Oxy, cho $A(1;3)$, $B(-1;2)$. Điểm $M(x;y)$ thuộc tia AB sao cho $AM=\\sqrt{80}$. Tính $x+y$.",
+                    keywords: ["-8"],
+                    hint: "Tính $\\vec{AB}$. M thuộc tia AB nên $\\vec{AM} = k\\vec{AB}$ với $k>0$. Tính độ dài để tìm k.",
+                    explanation: "$\\vec{AB}=(-2;-1)$, $AB=\\sqrt{5}$. $AM=\\sqrt{80}=4\\sqrt{5} \\Rightarrow \\vec{AM}=4\\vec{AB}=(-8;-4)$.<br>$x-1=-8 \\Rightarrow x=-7$. $y-3=-4 \\Rightarrow y=-1$. $x+y=-8$."
+                },
+                {
+                    id: 18,
+                    question: "Biết $\\sin \\alpha = \\frac{1}{4}$ ($90^{\\circ} < \\alpha < 180^{\\circ}$). Tính giá trị của $\\cot \\alpha$ (kết quả dạng -can(15)).",
+                    keywords: ["-can15", "-\\sqrt{15}"],
+                    hint: "Góc tù cos âm. $\\cos^2 = 1 - \\sin^2$. $\\cot = \\cos/\\sin$.",
+                    explanation: "$\\cos^2\\alpha = 1 - 1/16 = 15/16 \\Rightarrow \\cos\\alpha = -\\frac{\\sqrt{15}}{4}$.<br>$\\cot\\alpha = \\frac{-\\sqrt{15}/4}{1/4} = -\\sqrt{15}$."
+                },
+                {
+                    id: 19,
+                    question: "Cho $A(-2;5), B(-4;-2), C(1;5)$. Tìm D(x;y) để ABCD là hình bình hành. Tính $x+y$.",
+                    keywords: ["15"],
+                    hint: "Để ABCD là hình bình hành thì $\\vec{AB} = \\vec{DC}$.",
+                    explanation: "$\\vec{AB}=(-2;-7)$. $\\vec{DC}=(1-x; 5-y)$.<br>$1-x=-2 \\Rightarrow x=3$. $5-y=-7 \\Rightarrow y=12$.<br>$x+y = 15$."
+                },
+                {
+                    id: 20,
+                    question: "Bác Hai có một mảnh đất rộng 6 ha. Bác dự tính trồng cà chua và bắp cho mùa vụ sắp tới. Nếu trồng bắp thì bác Hai cần 10 ngày để trồng một ha. Nếu trồng cà chua thì bác Hai cần 20 ngày để trồng một ha. Biết rằng mỗi ha bắp sau thu hoạch bán được 30 triệu đồng, mỗi ha cà chua sau thu hoạch bán được 50 triệu đồng và bác Hai chỉ còn 100 ngày để canh tác cho kịp mùa vụ. Số tiền (triệu đồng) nhiều nhất mà bác Hai có thể thu được sau mùa vụ này là bao nhiêu?",
+                    keywords: ["260"],
+                    hint: "Lập hệ BPT: $x+y \\le 6$ và $10x+20y \\le 100$. Hàm $F=30x+50y$. Tìm max tại đỉnh.",
+                    explanation: "Đỉnh tối ưu là giao điểm của $x+y=6$ và $x+2y=10$ $\\Rightarrow (2;4)$.<br>$F_{max} = 30(2) + 50(4) = 260$."
+                },
+                {
+                    id: 21,
+                    question: "Tam giác ABC có $BC=10, \\widehat{B}=60^\\circ, \\widehat{A}=80^\\circ$. Tính chu vi (làm tròn hàng đơn vị).",
+                    keywords: ["25"],
+                    hint: "Tính góc C. Dùng định lý Sin để tìm 2 cạnh còn lại.",
+                    explanation: "$\\widehat{C}=40^\\circ$. $b = \\frac{10\\sin60}{\\sin80} \\approx 8.79$. $c = \\frac{10\\sin40}{\\sin80} \\approx 6.53$.<br>Chu vi $\\approx 10 + 8.79 + 6.53 = 25.32 \\Rightarrow 25$."
+                },
+                {
+                    id: 22,
+                    question: "Cho hình chữ nhật ABCD. Kẻ $BK \\perp AC$. M, N là trung điểm AK, CD. Số đo góc $\\widehat{BMN}$ bằng bao nhiêu độ?",
+                    keywords: ["90", "90 độ"],
+                    hint: "Dùng hệ trục tọa độ hoặc tích vô hướng để chứng minh vuông góc.",
+                    explanation: "Có thể chứng minh $\\vec{BM}.\\vec{MN}=0 \\Rightarrow BM \\perp MN$. Góc là $90^\\circ$."
+                }
+            ]
+        };
+
+        let currentPart = 1;
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = { p1: [], p2: [], p3: [] };
+        let partScores = { p1: 0, p2: 0, p3: 0 };
+        let studentInfo = { name: "", class: "" };
+        let timerInterval;
+        let timeLeft = 3600; 
+
+        function startGame() {
+            const name = document.getElementById('student-name').value.trim();
+            const className = document.getElementById('student-class').value.trim();
+            
+            if(!name || !className) {
+                document.getElementById('error-msg').classList.remove('hidden');
+                return;
+            }
+            
+            studentInfo.name = name;
+            studentInfo.class = className;
+            document.getElementById('student-display').innerText = `${name} - ${className}`;
+            document.getElementById('result-student-info').innerText = `${name} - ${className}`;
+
+            document.getElementById('welcome-screen').classList.replace('visible-page', 'hidden-page');
+            document.getElementById('game-ui').classList.replace('hidden-page', 'visible-page');
+            
+            startTimer();
+            renderQuestion();
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                    finishGame(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = document.getElementById('timer-display');
+            display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeLeft < 300) { 
+                display.classList.add('time-critical');
+            }
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('question-container');
+            const hintArea = document.getElementById('hint-area');
+            const hintContent = document.getElementById('hint-content');
+            
+            hintArea.classList.add('hidden');
+            hintContent.innerText = "";
+
+            const badge = document.getElementById('part-badge');
+            const title = document.getElementById('part-title');
+            const counter = document.getElementById('question-counter');
+            
+            let qData;
+            if(currentPart === 1) {
+                qData = gameData.part1[currentQuestionIndex];
+                badge.innerText = "PHẦN 1"; badge.className = "px-3 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-700 uppercase";
+                title.innerText = "Trắc nghiệm nhiều lựa chọn";
+                counter.innerText = `Câu ${currentQuestionIndex + 1}/${gameData.part1.length}`;
+            } else if(currentPart === 2) {
+                qData = gameData.part2[currentQuestionIndex];
+                badge.innerText = "PHẦN 2"; badge.className = "px-3 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 uppercase";
+                title.innerText = "Trắc nghiệm Đúng / Sai";
+                counter.innerText = `Câu ${currentQuestionIndex + 1}/${gameData.part2.length}`;
+            } else {
+                qData = gameData.part3[currentQuestionIndex];
+                badge.innerText = "PHẦN 3"; badge.className = "px-3 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700 uppercase";
+                title.innerText = "Trả lời ngắn";
+                counter.innerText = `Câu ${currentQuestionIndex + 1}/${gameData.part3.length}`;
+            }
+
+            let totalQ = gameData.part1.length + gameData.part2.length + gameData.part3.length;
+            let currentTotalIdx = (currentPart === 1 ? 0 : (currentPart === 2 ? gameData.part1.length : gameData.part1.length + gameData.part2.length)) + currentQuestionIndex;
+            document.getElementById('progress-bar').style.width = `${((currentTotalIdx) / totalQ) * 100}%`;
+
+            hintContent.innerHTML = qData.hint || "Không có gợi ý cho câu này.";
+
+            let html = '';
+            if(currentPart === 1) {
+                html = `<div class="mb-4"><h3 class="text-lg font-bold text-slate-800 mb-4 leading-relaxed">${qData.question}</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-3">${qData.options.map((opt, idx) => `<button onclick="selectOption(${idx})" id="opt-${idx}" class="option-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-left font-medium text-slate-600 w-full flex items-center"><span class="w-6 h-6 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center font-bold mr-3 text-xs">${String.fromCharCode(65+idx)}</span><span>${opt}</span></button>`).join('')}</div></div>`;
+            } else if (currentPart === 2) {
+                html = `<div class="mb-4"><h3 class="text-lg font-bold text-slate-800 mb-4 leading-relaxed">${qData.question}</h3><div class="space-y-3">${qData.items.map((item, idx) => `<div class="p-3 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-center gap-3"><div class="flex-1 font-medium text-slate-700 text-sm"><span class="font-bold mr-2 text-purple-600">${String.fromCharCode(97+idx)})</span> ${item.text}</div><div class="flex gap-2 shrink-0"><button onclick="selectTF(${idx}, true)" id="tf-${idx}-true" class="tf-btn px-4 py-1.5 rounded-lg border-2 border-slate-200 text-slate-500 font-bold text-xs hover:border-emerald-400 hover:text-emerald-600">ĐÚNG</button><button onclick="selectTF(${idx}, false)" id="tf-${idx}-false" class="tf-btn px-4 py-1.5 rounded-lg border-2 border-slate-200 text-slate-500 font-bold text-xs hover:border-red-400 hover:text-red-600">SAI</button></div></div>`).join('')}</div></div>`;
+            } else {
+                html = `<div class="mb-4"><h3 class="text-lg font-bold text-slate-800 mb-4 leading-relaxed">${qData.question}</h3><div class="max-w-md"><label class="block text-xs font-bold text-slate-400 mb-2 uppercase">Nhập đáp án:</label><input type="text" id="short-answer-input" class="w-full p-3 text-lg font-bold text-slate-800 bg-white border-2 border-slate-300 rounded-xl focus:border-orange-500 outline-none transition" placeholder="..." autocomplete="off"></div></div>`;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('next-btn').disabled = true;
+            if(window.MathJax) MathJax.typesetPromise([container, hintContent]);
+        }
+
+        function toggleHint() {
+            const area = document.getElementById('hint-area');
+            area.classList.toggle('hidden');
+        }
+
+        function selectOption(idx) {
+            document.querySelectorAll('.option-btn').forEach(btn => btn.className = "option-btn p-3 rounded-xl border-2 border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-left font-medium text-slate-600 w-full flex items-center");
+            document.getElementById(`opt-${idx}`).className = "option-btn p-3 rounded-xl border-2 border-blue-500 bg-blue-100 text-left font-medium text-slate-800 w-full flex items-center shadow-md";
+            document.getElementById('next-btn').disabled = false;
+            userAnswers.p1[currentQuestionIndex] = idx;
+        }
+
+        function selectTF(itemIdx, isTrue) {
+            const btnTrue = document.getElementById(`tf-${itemIdx}-true`);
+            const btnFalse = document.getElementById(`tf-${itemIdx}-false`);
+            
+            btnTrue.className = "tf-btn px-4 py-1.5 rounded-lg border-2 border-slate-200 text-slate-500 font-bold text-xs hover:border-emerald-400 hover:text-emerald-600";
+            btnFalse.className = "tf-btn px-4 py-1.5 rounded-lg border-2 border-slate-200 text-slate-500 font-bold text-xs hover:border-red-400 hover:text-red-600";
+            
+            if(isTrue) btnTrue.className = "tf-btn px-4 py-1.5 rounded-lg border-2 border-emerald-500 bg-emerald-500 text-white font-bold text-xs shadow-md selected";
+            else btnFalse.className = "tf-btn px-4 py-1.5 rounded-lg border-2 border-red-500 bg-red-500 text-white font-bold text-xs shadow-md selected";
+
+            if(!userAnswers.p2[currentQuestionIndex]) userAnswers.p2[currentQuestionIndex] = {};
+            userAnswers.p2[currentQuestionIndex][itemIdx] = isTrue;
+            if(Object.keys(userAnswers.p2[currentQuestionIndex]).length === 4) document.getElementById('next-btn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if(currentPart === 1) {
+                if(userAnswers.p1[currentQuestionIndex] === gameData.part1[currentQuestionIndex].correct) { score += 0.25; partScores.p1 += 0.25; document.querySelector('.game-card').classList.add('correct-anim'); }
+            } else if (currentPart === 2) {
+                let correctCount = 0;
+                gameData.part2[currentQuestionIndex].items.forEach((item, idx) => { if(userAnswers.p2[currentQuestionIndex][idx] === item.isTrue) correctCount++; });
+                let points = [0, 0.1, 0.25, 0.5, 1.0][correctCount];
+                score += points; partScores.p2 += points; document.querySelector('.game-card').classList.add('correct-anim');
+            } else {
+                let input = document.getElementById('short-answer-input').value.trim().toLowerCase();
+                userAnswers.p3[currentQuestionIndex] = input; 
+                if(gameData.part3[currentQuestionIndex].keywords.some(k => input === k.toLowerCase())) { score += 0.5; partScores.p3 += 0.5; document.querySelector('.game-card').classList.add('correct-anim'); }
+            }
+            
+            setTimeout(() => document.querySelector('.game-card').classList.remove('correct-anim'), 400);
+            document.getElementById('score').innerText = score.toFixed(2);
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if(currentPart === 1 && currentQuestionIndex >= gameData.part1.length) { currentPart = 2; currentQuestionIndex = 0; }
+                else if(currentPart === 2 && currentQuestionIndex >= gameData.part2.length) { currentPart = 3; currentQuestionIndex = 0; }
+                else if(currentPart === 3 && currentQuestionIndex >= gameData.part3.length) { finishGame(); return; }
+                renderQuestion();
+            }, 500);
+        }
+
+        function finishGame(isAutoSubmit = false) {
+            clearInterval(timerInterval);
+            document.getElementById('game-ui').classList.replace('visible-page', 'hidden-page');
+            document.getElementById('result-screen').classList.replace('hidden-page', 'visible-page');
+            document.getElementById('final-score').innerText = score.toFixed(2);
+            document.getElementById('score-p1').innerText = `${partScores.p1.toFixed(2)}/3.0`;
+            document.getElementById('score-p2').innerText = `${partScores.p2.toFixed(2)}/4.0`;
+            document.getElementById('score-p3').innerText = `${partScores.p3.toFixed(2)}/3.0`;
+            generateReview();
+            
+            if(GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith("http")) {
+                submitToGoogleSheet();
+            }
+        }
+
+        function submitToGoogleSheet() {
+            const statusEl = document.getElementById('sheet-status');
+            statusEl.classList.remove('hidden');
+            statusEl.innerText = "Đang gửi điểm về hệ thống...";
+            statusEl.className = "text-xs font-bold mb-4 text-blue-600";
+
+            const formData = new FormData();
+            formData.append("name", studentInfo.name);
+            formData.append("class", studentInfo.class);
+            formData.append("score", score.toFixed(2));
+            const detailStr = `P1:${partScores.p1}|P2:${partScores.p2}|P3:${partScores.p3}`;
+            formData.append("detail", detailStr);
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                body: formData,
+                mode: "no-cors"
+            }).then(() => {
+                statusEl.innerText = "Đã lưu điểm thành công vào Google Sheet!";
+                statusEl.className = "text-xs font-bold mb-4 text-green-600";
+            }).catch(err => {
+                console.error(err);
+                statusEl.innerText = "Lỗi khi gửi điểm (Vui lòng chụp ảnh màn hình kết quả).";
+                statusEl.className = "text-xs font-bold mb-4 text-red-600";
+            });
+        }
+
+        function toggleReview() {
+            const reviewSec = document.getElementById('review-section');
+            reviewSec.classList.toggle('hidden');
+            if(!reviewSec.classList.contains('hidden')) {
+                reviewSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function generateReview() {
+            const container = document.getElementById('review-content');
+            let html = '';
+
+            gameData.part1.forEach((q, idx) => {
+                const userAns = userAnswers.p1[idx];
+                const isCorrect = userAns === q.correct;
+                html += `
+                <div class="review-item">
+                    <div class="font-bold text-slate-800 mb-1">Câu ${idx+1} (P1): <span class="${isCorrect ? 'text-green-600' : 'text-red-600'}">${isCorrect ? 'Đúng' : 'Sai'}</span></div>
+                    <div class="text-sm text-slate-600 mb-2">${q.question}</div>
+                    <div class="text-sm bg-slate-50 p-3 rounded mb-2">
+                        <div><b>Bạn chọn:</b> ${q.options[userAns] || 'Chưa chọn'}</div>
+                        <div><b>Đáp án đúng:</b> <span class="text-green-700 font-bold">${q.options[q.correct]}</span></div>
+                    </div>
+                    <div class="text-sm text-slate-700"><i><b>Lời giải chi tiết:</b><br>${q.explanation}</i></div>
+                </div>`;
+            });
+
+            gameData.part2.forEach((q, idx) => {
+                html += `
+                <div class="review-item">
+                    <div class="font-bold text-slate-800 mb-2">Câu ${idx+1} (P2) - Đúng/Sai</div>
+                    <div class="text-sm text-slate-600 mb-2">${q.question}</div>
+                    <div class="space-y-1 mb-2">
+                        ${q.items.map((item, i) => {
+                            const uAns = userAnswers.p2[idx] ? userAnswers.p2[idx][i] : null;
+                            const correct = uAns === item.isTrue;
+                            return `<div class="text-sm flex justify-between bg-slate-50 p-2 rounded">
+                                <span>${String.fromCharCode(97+i)}) ${item.text}</span>
+                                <div>
+                                    <span class="mr-2 text-xs">Bạn: <b>${uAns ? 'Đ' : 'S'}</b></span>
+                                    <span class="badge-${correct ? 'correct' : 'wrong'}">Đ/A: ${item.isTrue ? 'Đúng' : 'Sai'}</span>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    <div class="text-sm text-slate-700"><i><b>Lời giải chi tiết:</b><br>${q.explanation}</i></div>
+                </div>`;
+            });
+
+            gameData.part3.forEach((q, idx) => {
+                const uAns = userAnswers.p3[idx];
+                const isCorrect = q.keywords.some(k => uAns === k.toLowerCase());
+                html += `
+                <div class="review-item">
+                    <div class="font-bold text-slate-800 mb-1">Câu ${idx+1} (P3): <span class="${isCorrect ? 'text-green-600' : 'text-red-600'}">${isCorrect ? 'Đúng' : 'Sai'}</span></div>
+                    <div class="text-sm text-slate-600 mb-2">${q.question}</div>
+                    <div class="text-sm bg-slate-50 p-3 rounded mb-2">
+                        <div><b>Bạn trả lời:</b> ${uAns || '...'}</div>
+                        <div><b>Đáp án chấp nhận:</b> ${q.keywords.join(', ')}</div>
+                    </div>
+                    <div class="text-sm text-slate-700"><i><b>Lời giải chi tiết:</b><br>${q.explanation}</i></div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+            if(window.MathJax) MathJax.typesetPromise([container]);
+        }
+
+        document.addEventListener('input', (e) => { if(e.target.id === 'short-answer-input') document.getElementById('next-btn').disabled = e.target.value.trim() === ''; });
+        document.addEventListener('keydown', (e) => { if (e.key === "Enter" && currentPart === 3 && !document.getElementById('next-btn').disabled) nextQuestion(); });
+    </script>
+</body>
+</html>
